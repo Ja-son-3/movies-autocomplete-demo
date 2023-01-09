@@ -1,7 +1,9 @@
 const express = require('express')
 const app = express()
 const cors = require('cors')
-const {MongoClient, ObjectId} = require('mongodb')
+const {MongoClient, ObjectId } = require('mongodb')
+const { response } = require('express')
+const { request } = require('http')
 require('dotenv').config()
 const PORT = 8000
 
@@ -21,13 +23,13 @@ app.use(express.urlencoded({extended : true}))
 app.use(express.json())
 app.use(cors())
 
-app.get('/search', async (request, response) => {
+app.get("/search", async (request,response) => {
     try {
         let result = await collection.aggregate([
             {
-                "$Search" : {
+                "$search" : {
                     "autocomplete" : {
-                        "query": `${result.query.query}`,
+                        "query": `${request.query.query}`,
                         "path": "title",
                         "fuzzy": {
                             "maxEdits":2,
@@ -52,9 +54,9 @@ app.get("/get/:id", async (request, response) => {
     } catch (error) {
         response.status(500).send({message: error.message})
     }
-})
-
+}
+)
 
 app.listen(process.env.PORT || PORT, () => {
-    console.log(`Server is running`)
+    console.log(`Server is running.`)
 })
